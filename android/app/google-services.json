@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "256422107867",
+    "project_id": "chatapp-b9690",
+    "storage_bucket": "chatapp-b9690.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256422107867:android:a23adb066a0f3bf3394afe",
+        "android_client_info": {
+          "package_name": "com.loulou.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "256422107867-leqqiq2uq4m60hppuuhhnhf6oaevon66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnQGKG6rU-5-DdlzbOM9AgQOdCf-iaKWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "256422107867-leqqiq2uq4m60hppuuhhnhf6oaevon66.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
