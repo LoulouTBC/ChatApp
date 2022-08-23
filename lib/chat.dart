@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Chat extends StatefulWidget {
-    static const screenRoute = 'chat';
+  static const screenRoute = 'chat';
 
   const Chat({Key? key}) : super(key: key);
 
@@ -10,6 +13,30 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  final _fireStore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+  late User signedInUser;
+  String? message;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signedInUser = user;
+        print(signedInUser.email);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +52,14 @@ class _ChatState extends State<Chat> {
           ),
           const Text('message me'),
         ]),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.logout))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                _auth.signOut();
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.logout))
+        ],
       ),
       body: SafeArea(
           child: Column(
@@ -45,7 +79,9 @@ class _ChatState extends State<Chat> {
               children: [
                 Expanded(
                   child: TextField(
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      message = value;
+                    },
                     decoration: const InputDecoration(
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -54,7 +90,12 @@ class _ChatState extends State<Chat> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _fireStore.collection('messages').add({
+                      'text': message,
+                      'sender': signedInUser.email,
+                    });
+                  },
                   child: Text(
                     'send',
                     style: TextStyle(
