@@ -1,3 +1,4 @@
+import 'package:chat/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -62,7 +63,7 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.yellow[900],
+        backgroundColor: Colors.purple[900],
         title: Row(children: [
           Image.asset(
             'images/1.png',
@@ -77,7 +78,7 @@ class _ChatState extends State<Chat> {
           IconButton(
               onPressed: () {
                 _auth.signOut();
-                Navigator.pop(context);
+                Navigator.pushNamed(context, SignIn.screenRoute);
                 // messageStream();
               },
               icon: const Icon(Icons.logout))
@@ -215,7 +216,9 @@ class MessageForm extends StatelessWidget {
                     topRight: Radius.circular(30),
                     bottomRight: Radius.circular(30),
                     bottomLeft: Radius.circular(30)),
-            color: isme == true ? Colors.blue[800] : Colors.white30,
+            color: isme == true
+                ? Colors.blue[800]
+                : Color.fromARGB(255, 255, 255, 255),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Text(

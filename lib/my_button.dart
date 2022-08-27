@@ -1,27 +1,55 @@
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
-  MyButton({required this.color, required this.title, required this.onPressed});
+  MyButton(
+      {required this.color1,
+      required this.color2,
+      required this.title,
+      required this.onPressed,
+      required this.colortitle});
 
-  final Color color;
+  final Color color1;
+  final Color color2;
   final String title;
+  final Color colortitle;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Material(
-        elevation: 5,
-        color: color,
-        borderRadius: BorderRadius.circular(10),
+    Size size = MediaQuery.of(context).size;
+
+    // return Padding(
+    //   padding: const EdgeInsets.symmetric(vertical: 10),
+    // child:
+    return Container(
+      width: size.width * 0.8,
+      // padding: EdgeInsets.only(top: 5),
+      margin: EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black38,
+              offset: new Offset(0, 0.8),
+              blurRadius: 27.0,
+            )
+          ],
+          gradient: LinearGradient(colors: [
+            color1,
+            color2,
+          ])),
+      // color: color,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(29),
         child: MaterialButton(
-          onPressed:onPressed,
+          hoverColor: Colors.purple,
+          focusColor: Colors.amber,
+          onPressed: onPressed,
           minWidth: 200,
           height: 42,
           child: Text(
             title,
-            style: const TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(color: colortitle, fontSize: 20),
           ),
         ),
       ),
