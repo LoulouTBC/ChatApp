@@ -63,13 +63,10 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[900],
-        title: Row(children: [
-          Image.asset(
-            'images/1.png',
-            height: 25,
-          ),
-          const SizedBox(
+        backgroundColor: Color(0xff6155A6),
+        title: Row(children: const [
+          Icon(Icons.arrow_back),
+          SizedBox(
             width: 10,
           ),
           const Text('message me'),
@@ -124,10 +121,10 @@ class _ChatState extends State<Chat> {
                       'time': FieldValue.serverTimestamp()
                     });
                   },
-                  child: Text(
+                  child: const Text(
                     'send',
                     style: TextStyle(
-                      color: Colors.blue[800],
+                      color: Color(0xff6155A6),
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
@@ -217,7 +214,7 @@ class MessageForm extends StatelessWidget {
                     bottomRight: Radius.circular(30),
                     bottomLeft: Radius.circular(30)),
             color: isme == true
-                ? Colors.blue[800]
+                ? Color(0xff6155A6)
                 : Color.fromARGB(255, 255, 255, 255),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),

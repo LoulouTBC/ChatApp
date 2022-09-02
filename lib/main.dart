@@ -1,4 +1,5 @@
 import 'package:chat/chat.dart';
+import 'package:chat/chatScreen.dart';
 import 'package:chat/regist.dart';
 import 'package:chat/signin.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +28,13 @@ class MyApp extends StatelessWidget {
       ),
       // home: Register(),
       initialRoute:
-          _auth.currentUser != null ? Chat.screenRoute : Welcome.screenRoute,
+          _auth.currentUser != null ? Chat.screenRoute : ChatScreen.screenRoute,
       routes: {
         Welcome.screenRoute: (context) => const Welcome(),
         SignIn.screenRoute: (context) => const SignIn(),
         Register.screenRoute: (context) => const Register(),
         Chat.screenRoute: (context) => const Chat(),
+        ChatScreen.screenRoute: (context) => const ChatScreen(),
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:chat/chat.dart';
+import 'package:chat/chatScreen.dart';
 import 'package:chat/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,19 +15,26 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  ScrollController sc = new ScrollController();
   bool showSpinner = false;
   final _auth = FirebaseAuth.instance;
   late String email;
   late String password;
+  void scroll(){
+    sc.position.maxScrollExtent;
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
-        child: SingleChildScrollView(
-          child: Column(
+        child: ListView(children: [
+          Column(
             children: [
               Stack(
                 children: [
@@ -47,7 +55,7 @@ class _SignInState extends State<SignIn> {
                         //   height: 50,
                         // ),
                         Container(
-                          margin: EdgeInsets.only(top: 140),
+                          margin: EdgeInsets.only(top: size.height * 0.18),
                           width: 100,
                           height: 200,
                           decoration: const BoxDecoration(
@@ -81,36 +89,41 @@ class _SignInState extends State<SignIn> {
                         SizedBox(
                           height: size.height * 0.23,
                         ),
-                        TextField(
-                          keyboardType: TextInputType.emailAddress,
+                        Container(
+                          child: Column(
+                            children: [
+                              TextField(
+                                scrollController: sc,
+                                
+                                keyboardType: TextInputType.emailAddress,
 
-                          // textAlign: TextAlign.center,
-                          onChanged: (value) {
-                            email = value;
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Enter your Email',
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color(0xff6155A6), width: 1),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color(0xffFFABE1), width: 2),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 6),
+                                // textAlign: TextAlign.center,
+                                onChanged: (value) {
+                                  email = value;
+                                },
+                                decoration: const InputDecoration(
+                                  hintText: 'Enter your Email',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Color(0xff6155A6), width: 1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Color(0xffFFABE1), width: 2),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 6),
                         TextField(
                           obscureText: true,
                           // textAlign: TextAlign.center,
@@ -166,6 +179,10 @@ class _SignInState extends State<SignIn> {
                                 print(e);
                               }
                             })
+                            ],
+                          ),
+                        ),
+                        
                       ],
                     ),
                   ),
@@ -173,8 +190,8 @@ class _SignInState extends State<SignIn> {
               ),
             ],
           ),
-        ),
+        ]),
       ),
-    );
+    ));
   }
 }
