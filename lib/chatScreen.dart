@@ -1,14 +1,17 @@
 import 'package:chat/card.dart';
+import 'package:chat/chat.dart';
+import 'package:chat/signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/widgets.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 final _fireStore = FirebaseFirestore.instance;
 late User signedInUser;
 
 class ChatScreen extends StatefulWidget {
-
-
   static const String screenRoute = "chatScreen";
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -17,144 +20,91 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getCurrentUser();
+    // getMessages();
   }
+
+  // getMessages() async {
+  //   CollectionReference chats = _fireStore
+  //       .collection('myusers')
+  //       .doc("IlOcW7L2nDINbGj9QJlJ")
+  //       .collection('users')
+  //       .doc("MO2Dxhhr6WWN3pbpePPG")
+  //       .collection('messages');
+  //   await chats.get().then((value) {
+  //     value.docs.forEach((element) {
+  //       print('=====================================');
+  //       print(element.data());
+  //     });
+  //   });
+  // }
 
   void getCurrentUser() {
     try {
       final user = _auth.currentUser;
       if (user != null) {
         signedInUser = user;
-        print(signedInUser.email);
+        // print(signedInUser.email);
+
       }
     } catch (e) {
       print(e);
     }
   }
-    final _auth = FirebaseAuth.instance;
 
-  getContacts(){
-    
-  }
-  
+  final _auth = FirebaseAuth.instance;
+
+  getContacts() {}
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.blue,
       appBar: AppBar(
         title: Text('hi'),
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () {
+                _auth.signOut();
+                Navigator.pushNamed(context, SignIn.screenRoute);
+                // messageStream();
+              },
+              icon: const Icon(Icons.logout))
+        ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(10),
-        decoration: const BoxDecoration(
-          // color: Colors.amber,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          color: Colors.white,
-        ),
-        child: ListView(
-          children: [
-            // FutureBuilder(
-            //   future: getContacts(),
-            //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-            //     if (snapshot.hasData) {
-            //       return ListView.builder(itemCount: snapshot.data,)
-            //     }
-            // }),
-            InkWell(
-                onTap: () {},
-                child: MyCard(ontap: () {}, title: 'loulou', subtitle: 'hi')),
-          ],
-        ),
-        // child: ListView(
-        //   children: [
-        //     ...List.generate(
-        //         4,
-        //         (index) => Container(
-        //               // padding: EdgeInsets.all(10),
-
-        //               decoration: BoxDecoration(
-        //                   border: Border(
-        //                       bottom: BorderSide(
-        //                           width: size.height * 0.002,
-        //                           color: Colors.grey[400]!))),
-        //               margin: EdgeInsets.only(
-        //                   top: 10, bottom: 0, left: 10, right: 10),
-        //               child: Material(
-        //                 // color: Colors.pink,
-        //                 child: InkWell(
-        //                   // hoverColor: Colors.amber,
-        //                   // focusColor: Colors.black,
-        //                   splashColor: Colors.grey,
-        //                   // highlightColor: Colors.amber,
-        //                   // splashFactory: ,
-        //                   onTap: (() {}),
-        //                   child: Container(
-        //                     // margin: EdgeInsets.symmetric(
-        //                     //     horizontal: 10, vertical: 20),
-        //                     width: 100,
-        //                     height: 90,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ))
-        //   ],
-        // ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _fireStore
+            .collection('users')
+            .where('userid', isNotEqualTo: signedInUser.uid)
+            .snapshots(),
+        builder: ((context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, i) {
+                  return MyCard(
+                      ontap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Chat(
+                                recieverid:
+                                    "${snapshot.data!.docs[i].get('userid')}",
+                                recievername:
+                                    "${snapshot.data!.docs[i].get('username')}")));
+                        // Chat(recieverid: "${snapshot.data!.docs[i].get('userid')}");
+                      },
+                      title: '${snapshot.data!.docs[i].get('username')}',
+                      subtitle: 'hi');
+                });
+          } else {
+            return Container();
+          }
+        }),
       ),
     );
-  }
-}
-
-class MyStreamBuilder extends StatelessWidget {
-  const MyStreamBuilder({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _fireStore.collection('messages').orderBy('time').snapshots(),
-        builder: (context, snapshot) {
-          List<MessageForm> messageWidgets = [];
-          if (snapshot.hasData) {
-            // ! اذا مافي داتا يعني
-            // add a spinner
-
-            final messages = snapshot
-                .data!.docs.reversed; //reversed to make new messages down
-            for (var message in messages) {
-              final messageText = message.get('text');
-              final messageSender = message.get('sender');
-              final currentuser = signedInUser.email;
-
-              // if (currentuser == messageSender {
-              //   //the code of the message from the signed in user
-
-              // }
-              final messageWidget = MessageForm(
-                text: messageText,
-                sender: messageSender,
-                isme: currentuser == messageSender, //if statement
-              );
-              messageWidgets.add(messageWidget);
-            }
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(backgroundColor: Colors.blue),
-            );
-          }
-          return Expanded(
-            child: ListView(
-              reverse: true, //but new messages still at top
-              children: messageWidgets,
-            ),
-          );
-        });
   }
 }

@@ -1,7 +1,9 @@
 // ignore_for_file: sized_box_for_whitespace
 
 import 'package:chat/chat.dart';
+import 'package:chat/chatScreen.dart';
 import 'package:chat/my_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -15,11 +17,55 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final _auth = FirebaseAuth.instance; //لتسجيل المستخمين
+  final _auth = FirebaseAuth.instance;
+  final _fireStore = FirebaseFirestore.instance; //لتسجيل المستخمين
 
-  late String email;
-  late String password;
+  String? myemail;
+  String? myname;
+  String? mypassword;
   bool showSpinner = false;
+  GlobalKey<FormState> formstate = new GlobalKey();
+
+  register() async {
+    var formData = formstate.currentState;
+    formData!.save();
+    // async مشان مايكمل التطبيق شغلو قبل ما اعمل المصادقة
+
+    // sync متزامنة بيحدثو سوا
+    // async غير متزامنة متل المستقبل(future)
+
+    // in try catch for errors
+    setState(() {
+      // لأنو تطبيق تفاعلي و statfl بتتغير حالته باستمرار
+      showSpinner = true;
+    });
+
+    try {
+      final newUser = await _auth.createUserWithEmailAndPassword(
+          email: myemail!, password: mypassword!);
+      Navigator.pushReplacementNamed(context, ChatScreen.screenRoute);
+      setState(() {
+        showSpinner = false;
+      });
+      CollectionReference usersref = _fireStore.collection('users');
+
+      usersref.doc("${FirebaseAuth.instance.currentUser!.uid}").set({
+
+        "username": "${myname}",
+        "email": "${myemail}",
+        "userid": "${FirebaseAuth.instance.currentUser!.uid}",
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        //show dialog
+        print(e);
+      } else if (e.code == 'email-already-in-use') {
+        print(e);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,65 +130,104 @@ class _RegisterState extends State<Register> {
                           ),
 
                           SizedBox(
-                            height: size.height * 0.23,
+                            height: size.height * 0.18,
                           ),
-                          TextField(
-                            keyboardType: TextInputType.emailAddress,
-                            // textAlign: TextAlign.center,
-                            onChanged: (value) {
-                              email = value;
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Enter your Email',
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xff6155A6), width: 1),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xffFFABE1), width: 2),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
+                          Form(
+                            key: formstate,
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                  onSaved: (newValue) {
+                                    myname = newValue;
+                                  },
+                                  keyboardType: TextInputType.emailAddress,
+                                  // textAlign: TextAlign.center,
+
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter your Name',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xff6155A6), width: 1),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xffFFABE1), width: 2),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * 0.004),
+                                TextFormField(
+                                  onSaved: (newValue) {
+                                    myemail = newValue;
+                                  },
+                                  keyboardType: TextInputType.emailAddress,
+                                  // textAlign: TextAlign.center,
+
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter your Email',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xff6155A6), width: 1),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xffFFABE1), width: 2),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * 0.004),
+                                TextFormField(
+                                  obscureText: true,
+                                  // textAlign: TextAlign.center,
+                                  onSaved: (value) {
+                                    mypassword = value;
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter your Password',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xff6155A6), width: 1),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xffFFABE1), width: 2),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          TextField(
-                            obscureText: true,
-                            // textAlign: TextAlign.center,
-                            onChanged: (value) {
-                              password = value;
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Enter your Password',
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xff6155A6), width: 1),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xffFFABE1), width: 2),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                            ),
-                          ),
+
                           const SizedBox(
                             height: 6,
                           ),
@@ -152,29 +237,7 @@ class _RegisterState extends State<Register> {
                               color2: Color.fromARGB(255, 214, 201, 240),
                               title: 'Sign Up',
                               onPressed: () async {
-                                // async مشان مايكمل التطبيق شغلو قبل ما اعمل المصادقة
-
-                                // sync متزامنة بيحدثو سوا
-                                // async غير متزامنة متل المستقبل(future)
-
-                                // in try catch for errors
-                                setState(() {
-                                  // لأنو تطبيق تفاعلي و statfl بتتغير حالته باستمرار
-                                  showSpinner = true;
-                                });
-
-                                try {
-                                  final newUser = await _auth
-                                      .createUserWithEmailAndPassword(
-                                          email: email, password: password);
-                                  Navigator.pushNamed(
-                                      context, Chat.screenRoute);
-                                  setState(() {
-                                    showSpinner = false;
-                                  });
-                                } catch (e) {
-                                  print(e);
-                                }
+                                await register();
                               })
                         ],
                       ),

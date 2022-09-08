@@ -28,12 +28,12 @@ class MyApp extends StatelessWidget {
       ),
       // home: Register(),
       initialRoute:
-          _auth.currentUser != null ? Chat.screenRoute : ChatScreen.screenRoute,
+          _auth.currentUser != null ? ChatScreen.screenRoute : SignIn.screenRoute,
       routes: {
         Welcome.screenRoute: (context) => const Welcome(),
         SignIn.screenRoute: (context) => const SignIn(),
         Register.screenRoute: (context) => const Register(),
-        Chat.screenRoute: (context) => const Chat(),
+        Chat.screenRoute: (context) =>  Chat(recieverid: '',recievername: '',),
         ChatScreen.screenRoute: (context) => const ChatScreen(),
       },
     );

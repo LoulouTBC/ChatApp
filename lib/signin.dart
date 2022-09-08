@@ -152,8 +152,8 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 4,
+                         SizedBox(
+                          height: size.height*0.05,
                         ),
                         MyButton(
                             colortitle: Colors.white,
@@ -169,8 +169,8 @@ class _SignInState extends State<SignIn> {
                                     await _auth.signInWithEmailAndPassword(
                                         email: email, password: password);
                                 if (user != null) {
-                                  Navigator.pushNamed(
-                                      context, Chat.screenRoute);
+                                  Navigator.pushReplacementNamed(
+                                      context, ChatScreen.screenRoute);
                                   setState(() {
                                     showSpinner = false;
                                   });
