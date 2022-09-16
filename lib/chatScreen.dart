@@ -25,23 +25,47 @@ class _ChatScreenState extends State<ChatScreen> {
     // TODO: implement initState
     super.initState();
     getCurrentUser();
-    // getMessages();
+    // lastMessage= getMessages('KB8BnqN3Xma62VCrnKtpZvxqVEm2').toString();
   }
 
-  // getMessages() async {
-  //   CollectionReference chats = _fireStore
-  //       .collection('myusers')
-  //       .doc("IlOcW7L2nDINbGj9QJlJ")
-  //       .collection('users')
-  //       .doc("MO2Dxhhr6WWN3pbpePPG")
-  //       .collection('messages');
-  //   await chats.get().then((value) {
-  //     value.docs.forEach((element) {
-  //       print('=====================================');
-  //       print(element.data());
-  //     });
-  //   });
-  // }
+  late String lastMessage;
+  getMessages(recieverid)  {
+    late String lastMessage;
+    final m =  _fireStore
+        .collection('users')
+        .doc(signedInUser.uid)
+        .collection('others')
+        .doc(recieverid)
+        .collection('messages')
+        .snapshots()
+        .listen((event) {
+      return event.docs.first.get('text');
+    });
+
+    
+
+    // return (lastMessage);
+    // var messages =  _fireStore
+    //     .collection('users')
+    //     .doc(signedInUser.uid)
+    //     .collection('others')
+    //     .doc(recieverid)
+    //     .collection('messages')
+    //     .orderBy('time', descending: true)
+    //     .limit(1)
+    //     .get()
+    //     .then((value) {
+    //   value.docs.forEach((element) {
+    //     // print('=====================================');
+    //     // print(element.get('text'));
+    //     lastMessage = element.get('text').toString();
+    //   });
+    // });
+    // // print("=======================");
+    // // print("==================================");
+    // // print(lastMessage);
+    // return lastMessage;
+  }
 
   void getCurrentUser() {
     try {
@@ -98,7 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         // Chat(recieverid: "${snapshot.data!.docs[i].get('userid')}");
                       },
                       title: '${snapshot.data!.docs[i].get('username')}',
-                      subtitle: 'hi');
+                      subtitle:  lastMessage);
                 });
           } else {
             return Container();

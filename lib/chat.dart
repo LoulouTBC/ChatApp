@@ -31,7 +31,7 @@ class _ChatState extends State<Chat> {
     // TODO: implement initState
     super.initState();
     getUsers();
-    getMessages();
+    // getMessages();
   }
 
   void getUsers() async {
@@ -69,6 +69,7 @@ class _ChatState extends State<Chat> {
   }
 
   addMessages() async {
+    lastMessage = message;
     await _fireStore
         .collection('users')
         .doc("${signedInUser.uid}")
@@ -95,21 +96,43 @@ class _ChatState extends State<Chat> {
     });
   }
 
-  void getMessages() async {
-    final messages = await _fireStore
-        .collection('users')
-        .doc('${signedInUser.uid}')
-        .collection('others')
-        .doc('QKfedPwY7CR44gML2hi54q8vQa53')
-        .collection('messages')
-        .get();
-    // get return snapshot(copy of database at the moment)
-    for (var message in messages.docs) {
-      // for لأنو بدي كل رسالة لحال
-      //
-      print(message.data());
-    }
-  }
+  String? lastMessage;
+  // void getMessages() async {
+    //   final messages = await _fireStore
+    //       .collection('users')
+    //       .doc('${signedInUser.uid}')
+    //       .collection('others')
+    //       .doc('QKfedPwY7CR44gML2hi54q8vQa53')
+    //       .collection('messages')
+    //       .get();
+    //   // get return snapshot(copy of database at the moment)
+    //   for (var message in messages.docs) {
+    //     // for لأنو بدي كل رسالة لحال
+    //     //
+    //     print(message.data());
+    //   }
+
+
+  //   await _fireStore
+  //       .collection('users')
+  //       .doc("${signedInUser.uid}")
+  //       .collection('others')
+  //       .doc("${widget.recieverid}")
+  //       .collection('messages')
+  //       // .where('senderid', isEqualTo: signedInUser.uid)
+  //       // .where('recieverid', isEqualTo: widget.recieverid)
+  //       //بدي الرسائل تنعكس لما تصير سيندر وريسيفر
+  //       .orderBy('time')
+  //       .limitToLast(1)
+  //       .get()
+  //       .then(
+  //     (value) {
+  //       value.docs.forEach((element) {
+  //         element.get('text');
+  //       });
+  //     },
+  //   );
+  // }
 
   // void messageStream() async {
   //   await for (var snapshot in _fireStore.collection('messages').snapshots()) {
@@ -173,7 +196,8 @@ class _ChatState extends State<Chat> {
                       //   //the code of the message from the signed in user
 
                       // }
-                      final messageWidget = MessageForm(
+
+                      var messageWidget = MessageForm(
                         reciever: messagereciever,
                         text: messageText,
                         sender: messageSender,
@@ -218,8 +242,8 @@ class _ChatState extends State<Chat> {
                   ),
                   TextButton(
                     onPressed: () async {
-                      myController.clear();
                       await addMessages();
+                      myController.clear();
                       // await _fireStore
                       //     .collection('users')
                       //     .doc("${signedInUser.uid}")

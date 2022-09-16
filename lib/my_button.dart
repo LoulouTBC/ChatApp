@@ -24,14 +24,14 @@ class MyButton extends StatelessWidget {
     return Container(
       width: size.width * 0.8,
       // padding: EdgeInsets.only(top: 5),
-      margin: EdgeInsets.only(top: 10),
+      // margin: EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
               color: Colors.black38,
               offset: new Offset(0, 0.8),
-              blurRadius: 27.0,
+              blurRadius: 22.0,
             )
           ],
           gradient: LinearGradient(colors: [
@@ -45,11 +45,11 @@ class MyButton extends StatelessWidget {
           hoverColor: Colors.purple,
           focusColor: Colors.amber,
           onPressed: onPressed,
-          minWidth: 200,
-          height: 42,
+          // minWidth: size.width * 0.2,
+          // height: 42,
           child: Text(
             title,
-            style: TextStyle(color: colortitle, fontSize: 20),
+            style: TextStyle(color: colortitle, fontSize: size.width * 0.055),
           ),
         ),
       ),

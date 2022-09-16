@@ -27,13 +27,17 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: Register(),
-      initialRoute:
-          _auth.currentUser != null ? ChatScreen.screenRoute : SignIn.screenRoute,
+      initialRoute: _auth.currentUser != null
+          ? ChatScreen.screenRoute
+          : Welcome.screenRoute,
       routes: {
         Welcome.screenRoute: (context) => const Welcome(),
         SignIn.screenRoute: (context) => const SignIn(),
         Register.screenRoute: (context) => const Register(),
-        Chat.screenRoute: (context) =>  Chat(recieverid: '',recievername: '',),
+        Chat.screenRoute: (context) => const Chat(
+              recieverid: '',
+              recievername: '',
+            ),
         ChatScreen.screenRoute: (context) => const ChatScreen(),
       },
     );
